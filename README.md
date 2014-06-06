@@ -20,11 +20,6 @@ npm link
 
 MBot's command-line interface is designed to be ver similar to NPM.  
 So far, the command options are:
-  - install
-  - init
-  - publish
-  - config
-  - help
 
 
 ```
