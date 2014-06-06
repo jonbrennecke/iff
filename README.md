@@ -26,7 +26,7 @@ So far, the command options are:
   - config
   - help
 
-Usage: mbot [options]
+	Usage: mbot [options]
 
 	Options:
 		install <package>	Query the API for a given package; and if it's found,
