@@ -1,0 +1,20 @@
+{
+	"name" : "mpack",
+	"dependencies" : {
+		"express" : "*",
+		"cli-color" : "*",
+		"body-parser" : "*",
+		"mkdirp" : "*"
+	},
+	"repository" : {
+		"type" : "git",
+		"url" : "https://github.com/jonbrennecke/matpack"
+	},
+	"scripts" : {
+		"start" : "node ./server/server.js"
+	},
+	"preferGlobal" : "true",
+	"bin" : {
+		"mbot" : "mbot.js"
+	}
+}
