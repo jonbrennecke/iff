@@ -56,6 +56,7 @@ Packer.prototype = {
 	},
 
 
+
 	/**
 	 *
 	 * interactively init a package
@@ -110,7 +111,6 @@ Packer.prototype = {
 		
 	}
 
-
 };
 
-module.exports = new Packer( "localhost:2999" );
+module.exports = Packer;

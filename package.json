@@ -4,14 +4,17 @@
 		"express" : "*",
 		"cli-color" : "*",
 		"body-parser" : "*",
-		"mkdirp" : "*"
+		"mkdirp" : "*",
+		"request" : "*",
+		"underscore" : "*"
 	},
 	"repository" : {
 		"type" : "git",
 		"url" : "https://github.com/jonbrennecke/matpack"
 	},
 	"scripts" : {
-		"start" : "node ./server/server.js"
+		"start" : "node ./server/server.js",
+		"install" : "npm link"
 	},
 	"preferGlobal" : "true",
 	"bin" : {

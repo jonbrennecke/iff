@@ -4,18 +4,13 @@
  *
  * MBOT is a package manager for MATLAB (but this is just the Command Line Interpreter)
  *
- * 
- *
  *
  * USAGE:
- *
- * install <package> - query the api for a given package and if it's found, download it, unpack it and add it to the matlab path
- * update <package> - query the api for new version of the package
- * init <new package name> - init the default package structure in the current folder
- *
+ *		type "mbot help" to display the help information
  *
  *
  */
+
 
 // string to be displayed by "mbot help"
 var helpstring = 
@@ -38,18 +33,23 @@ var helpstring =
 	
 
 
-
-
-var packer = require( __dirname + "/mbot-packer" ),
-	log = require( __dirname + "/mbot-logging" ),
-
-	clc = require('cli-color'),
+var clc = require('cli-color'),
 	_ = require("underscore"),
-	fs = require('fs');
+	fs = require('fs'),
+
+	// local
+	Packer = require( __dirname + "/mbot-packer" ),
+	log = require( __dirname + "/mbot-logging" );
 
 
-if ( process.argv.length == 2 )
-	console.log( clc.redBright("requires command line arguments") )
+
+
+
+// if no arguments are provided, display the helpstring
+if ( process.argv.length == 2 ) {
+	console.log( clc.redBright("requires command line arguments\n\n") );
+	console.log( helpstring );
+}
 
 
 /**
@@ -76,13 +76,21 @@ fs.readFile( __dirname + "/mbot-config.json", function ( err, data ) {
 });
 
 
+// if 'remote' is set in the config JSON file, use that; otherwise default to localhost
+var packer = new Packer( config.remote || "localhost:80" );
 
 
 
-// read command line args
+/**
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ read command line args ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+ * 
+ */
+
 for ( var i = 0; i < process.argv.length; i++ ) {
 
 	switch ( process.argv[i] ) {
+
 		case "help" :
 			console.log( helpstring );
 			break;
@@ -134,12 +142,10 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 			log.msg( "Configuration saved." );
 
-
 			break;
 
 
 		case "update" :
-		case "add-to-path" :
 		case __filename :
 		case process.execPath :
 		default :

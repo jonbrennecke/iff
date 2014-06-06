@@ -27,7 +27,7 @@ app.use( bodyParser() );
 app.use( '/api', router );
 
 
-//
+// INSTALL
 router.route( '/install' )
 	.get( function ( req, res ) {
 		
@@ -48,6 +48,7 @@ router.route( '/install' )
 
 	})
 
+// PUBLISH
 router.route( '/publish' )
 
 	/**
