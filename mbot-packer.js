@@ -75,9 +75,26 @@ Packer.prototype = {
 	},
 
 
+	/**
+	 *
+	 * append a line adding <path> to the setup.m file
+	 * 
+	 * TODO stat setup.m to make sure it exists before writing
+	 */
+	addToSetup : function ( path ) {
+		fs.appendFile( 'setup.m', "\r\naddpath '" + path + "'", function ( err ) {
+			if ( err )
+				console.log( err )
+		});
+	},
 
-	// query if a package by a given name exists,
-	// if so fetch it and unpack it
+
+	/**
+	 *
+	 * query if a package by a given name exists,
+	 * if so fetch it and unpack it
+	 *
+	 */
 	install : function ( pkg ) {
 
 		var url = "http://" + this.remote + "/api/install?pkg=" + pkg;
@@ -93,6 +110,8 @@ Packer.prototype = {
 
 				// install a git repository
 				var git = spawn( "git", [ "clone", res.body.message, "mbot-modules/" + pkg ] );
+
+				this.addToSetup( pkg );
 
 				// // TODO add support for other sorts of repositories
 				// switch ( res.body.message.type ) {
@@ -116,7 +135,7 @@ Packer.prototype = {
 			else {
 				log.serverError( res.body.message )
 			}
-		});
+		}.bind(this));
 		
 	}
 

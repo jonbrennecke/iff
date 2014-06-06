@@ -15,25 +15,6 @@
  *
  */
 
-
-// string to be displayed by "mbot help"
-var helpstring = 
-	"Usage: mbot [options]\n\n" +
-
-	"Options: \n" + 
-		"\tinstall <package>\tQuery the API for a given package; and if it's found, \n" +
-		"\t\t\t\tdownload it, unpack it and add it to the matlab path.\n\n" +
-
-		"\tinit [folder]\t\tInteractively create a package structure in a folder (or \n" +
-		"\t\t\t\tthe current directory, if no folder is provided).\n\n" +
-
-		"\tpublish [folder]\tIf 'folder' is a module, publish the module by \n" +
-		"\t\t\t\tregistering it with the API.\n\n" +
-
-		"\tconfig <key=value>\tSet a key value pair in the config file.\n\n" +
-
-		"\thelp\t\t\tDisplay this prompt.\n"
-
 	
 
 
@@ -46,7 +27,8 @@ var clc = require('cli-color'),
 	log = require( __dirname + "/mbot-logging" );
 
 
-
+// string to be displayed by "mbot help"
+var helpstring = fs.readFileSync( __dirname + "/mbot-help.txt", "utf8" );
 
 
 // if no arguments are provided, display the helpstring
