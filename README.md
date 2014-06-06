@@ -18,7 +18,7 @@ npm link
 
 ####Usage:
 
-MBot's command-line interface is designed to be ver similar to NPM.  
+MBot's command-line interface is designed to be very similar to NPM.  
 So far, the command options are:
 
 
