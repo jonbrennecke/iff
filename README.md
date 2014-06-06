@@ -26,12 +26,18 @@ So far, the command options are:
   - config
   - help
 
-#### install
-```
-mbot install <package>
-```
+Usage: mbot [options]
 
-#### init
-```
-mbot init [folder]
-```
+	Options:
+		install <package>	Query the API for a given package; and if it's found,
+							download it, unpack it and add it to the matlab path.
+
+		init [folder]		Interactively create a package structure in a folder (or
+							the current directory, if no folder is provided).
+
+		publish [folder]	If 'folder' is a module, publish the module by
+							registering it with the API.
+
+		config <key=value>	Set a key value pair in the config file.\n\n" +
+
+		help				Display this prompt.
