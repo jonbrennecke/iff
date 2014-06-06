@@ -41,12 +41,16 @@ Packer.prototype = {
 			// POST the json data to the server
 			request.post( url, { json : { pkg : pkg.name, data : pkg } }, function ( err, res ) {
 				
-				if ( res.body.status == 201 )
+				if ( err && err.code == "ECONNREFUSED" )
+					log.serverError( "Couldn't reach the server!" ).die();
+				else if ( err )
+					throw( err )
+				if ( res.body && res.body.status == 201 )
 					log.msg( "The package has been added to the database." );
-				else if ( res.body.status == 200 )
+				else if ( res.body && res.body.status == 200 )
 					log.msg( "The package has been updated on the database." );
 				else {
-					log.serverError( res.body.message )
+					log.serverError( res.body.message ).die();
 				}
 
 			});
@@ -85,21 +89,26 @@ Packer.prototype = {
 
 			if ( res.body.status == 200 ) { // the package has been found
 
-				// TODO add support for other sorts of repositories
-				switch ( res.body.message.type ) {
+				log.git( res.body.message );
+
+				// install a git repository
+				var git = spawn( "git", [ "clone", res.body.message, "mbot-modules/" + pkg ] );
+
+				// // TODO add support for other sorts of repositories
+				// switch ( res.body.message.type ) {
 					
-					case "git" : 
+				// 	case "git" : 
 
-						log.git( res.body.message.url );
+				// 		log.git( res.body.message.url );
 
-						// install a git repository
-						var git = spawn( "git", [ "clone", res.body.message.url, "mbot-modules/" + pkg ] );
+				// 		// install a git repository
+				// 		var git = spawn( "git", [ "clone", res.body.message.url, "mbot-modules/" + pkg ] );
 
-						break;
+				// 		break;
 
-					default :
-						break;
-				}
+				// 	default :
+				// 		break;
+				// }
 
 			}
 			else if ( res.body.status == 404 )

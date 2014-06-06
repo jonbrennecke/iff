@@ -9,16 +9,18 @@
  *
  *
  */
-  
+
 
 
 var express = require('express'),
 	app = express(),
 	router = express.Router(),
 	bodyParser = require('body-parser'),
+
 	db = require( __dirname + '/db.js' ),
 	Package = require( __dirname + "/api/models/package" ),
-	log = require( __dirname + "/api/logging" );
+	log = require( __dirname + "/api/logging" ),
+	Version = require( __dirname + "/version" );
 
 
 
@@ -67,9 +69,9 @@ router.route( '/publish' )
 				// versions to see if we should update the package
 				if ( pkg ) {
 					
-					if ( Number( req.body.data.version ) > pkg.version ) {
+					if ( new Version( req.body.data.version ).newer( pkg.version ) ) {
 
-						// publish a newer version, so update the package
+						// it's a newer version, so update the package
 						pkg.update( req.body.data, function ( err ) {
 							
 							if ( err )
@@ -79,7 +81,7 @@ router.route( '/publish' )
 						});
 
 					}
-					else if ( Number( req.body.data.version ) == pkg.version ) {
+					else if ( new Version( req.body.data.version ).equals( pkg.version ) ) {
 						res.send( log.get( "notModified", "A package by the same name and version " + 
 							"already exists.\nIf you are the creator of the \"" + req.body.pkg +
 							"\" package and are trying to update it, please increment the version number first."  ) );
@@ -98,7 +100,7 @@ router.route( '/publish' )
 					pkg.save( function ( err ) {
 
 						if( err )
-							res.send( log.get( "serverError", err ) );
+							res.send( log.get( "serverError", err.toString() ) );
 
 						else
 							res.send( log.get( "created", "created package" ) );
@@ -117,6 +119,6 @@ router.route( '/publish' )
 	});
 
 
-app.listen(2999);
+app.listen(80);
 
 

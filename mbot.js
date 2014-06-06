@@ -8,6 +8,10 @@
  * USAGE:
  *		type "mbot help" to display the help information
  *
+ * TODO:
+ *		'mbot start'
+ *		startup.m
+ *		use symbolic links for globally installed files
  *
  */
 

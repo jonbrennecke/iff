@@ -13,7 +13,7 @@ var PackageSchema = new Schema({
 	repository : Object,
 	description : String,
 	keywords : Array,
-	version : Number,
+	version : String,
 	dependencies : String
 });
 
