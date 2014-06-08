@@ -1,6 +1,6 @@
 #MBot
 
-MBot is a package manager for Matlab/Octave. It's a work-in-progress currently, but nearing completion.
+MBot is a package manager for Matlab/Octave. It's a work-in-progress currently.
 
 MBot is written in [Node.js](http://nodejs.org/) and requires both Node and (Node's own package manager) [NPM](https://www.npmjs.org/) to run. It also depends on the [git](https://help.github.com/articles/set-up-git) executable to install packages.
 
