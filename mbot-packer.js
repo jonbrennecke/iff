@@ -9,12 +9,16 @@ var http = require('http'),
 	fs = require('fs'),
 	request = require('request'),
 	spawn = require('child_process').spawn,
+	Q = require("q"),
 	log = require( __dirname + "/mbot-logging" );
 
 
 
-function Packer ( remote ) {
-	this.remote = remote;
+function Packer () {
+
+	// 'remote' is deffered until the JSON config file can be read.
+	this.remote = Q.defer();
+
 };
 
 Packer.prototype = {
@@ -27,35 +31,40 @@ Packer.prototype = {
 	 */
 	publish : function ( dir ) {
 
-		fs.readFile( ( dir || "." ) + "/mbot.json", function ( err, data ) {
-			
-			// if the mbot.json file doesn't exist, then we aren't in a valid module
-			if ( err && err.code == "ENOENT" )
-				log.notModError( dir ).die();
+		// defer until remote is resolved
+		this.remote.promise.then( function ( remote ) {
 
-			var url = "http://" + this.remote + "/api/publish",
-				pkg = JSON.parse( data );
-
-			log.http( url, "POST" );
-
-			// POST the json data to the server
-			request.post( url, { json : { pkg : pkg.name, data : pkg } }, function ( err, res ) {
+			fs.readFile( ( dir || "." ) + "/mbot.json", function ( err, data ) {
 				
-				if ( err && err.code == "ECONNREFUSED" )
-					log.serverError( "Couldn't reach the server!" ).die();
-				else if ( err )
-					throw( err )
-				if ( res.body && res.body.status == 201 )
-					log.msg( "The package has been added to the database." );
-				else if ( res.body && res.body.status == 200 )
-					log.msg( "The package has been updated on the database." );
-				else {
-					log.serverError( res.body.message ).die();
-				}
+				// if the mbot.json file doesn't exist, then we aren't in a valid module
+				if ( err && err.code == "ENOENT" )
+					log.notModError( dir ).die();
+
+				var url = "http://" + remote + "/api/publish",
+					pkg = JSON.parse( data );
+
+				log.http( url, "POST" );
+
+				// POST the json data to the server
+				request.post( url, { json : { pkg : pkg.name, data : pkg } }, function ( err, res ) {
+					
+					if ( err && err.code == "ECONNREFUSED" )
+						log.serverError( "Couldn't reach the server!" ).die();
+					else if ( err )
+						throw( err )
+					if ( res.body && res.body.status == 201 )
+						log.msg( "The package has been added to the database." );
+					else if ( res.body && res.body.status == 200 )
+						log.msg( "The package has been updated on the database." );
+					else {
+						log.serverError( res.body.message ).die();
+					}
+
+				});
 
 			});
 
-		}.bind(this));
+		});
 
 	},
 
@@ -78,8 +87,8 @@ Packer.prototype = {
 	/**
 	 *
 	 * append a line adding <path> to the setup.m file
-	 * 
-	 * TODO stat setup.m to make sure it exists before writing
+	 * (creates setup.m if it doesn't already exist)
+	 *
 	 */
 	addToSetup : function ( path ) {
 		fs.appendFile( 'setup.m', "\r\naddpath '" + path + "'", function ( err ) {
@@ -97,48 +106,39 @@ Packer.prototype = {
 	 */
 	install : function ( pkg ) {
 
-		var url = "http://" + this.remote + "/api/install?pkg=" + pkg;
-		log.http( url, "GET" );
+		// defer until remote is resolved
+		this.remote.promise.then( function ( remote ) {
+
+			var url = "http://" + remote + "/api/install?pkg=" + pkg;
+			log.http( url, "GET" );
 
 
-		// ask the server for a url to download the package
-		request.get( url, { json : { pkg : pkg } }, function ( req, res ) {
+			// ask the server for a url to download the package
+			request.get( url, { json : { pkg : pkg } }, function ( req, res ) {
 
-			if ( res.body.status == 200 ) { // the package has been found
+				if ( res && res.body && res.body.status == 200 ) { // the package has been found
 
-				log.git( res.body.message );
+					log.git( res.body.message );
 
-				// install a git repository
-				var git = spawn( "git", [ "clone", res.body.message, "mbot-modules/" + pkg ] );
+					// install a git repository
+					var git = spawn( "git", [ "clone", res.body.message, "mbot-modules/" + pkg ] );
 
-				this.addToSetup( pkg );
+					this.addToSetup( pkg );
 
-				// // TODO add support for other sorts of repositories
-				// switch ( res.body.message.type ) {
-					
-				// 	case "git" : 
+				}
+				else if ( res && res.body && res.body.status == 404 )
+					log.msg( res.body.message );
+				else {
+					log.serverError( res && res.body ? res.body.message : "Could not reach server! " +
+						"Use 'mbot config remote=<url>' to tell mbot where to find the server." );
+				}
 
-				// 		log.git( res.body.message.url );
+			}.bind(this) );
 
-				// 		// install a git repository
-				// 		var git = spawn( "git", [ "clone", res.body.message.url, "mbot-modules/" + pkg ] );
-
-				// 		break;
-
-				// 	default :
-				// 		break;
-				// }
-
-			}
-			else if ( res.body.status == 404 )
-				log.msg( res.body.message );
-			else {
-				log.serverError( res.body.message )
-			}
-		}.bind(this));
-		
+		}.bind(this) );
+			
 	}
 
 };
 
-module.exports = Packer;
+module.exports = new Packer();

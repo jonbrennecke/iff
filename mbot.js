@@ -15,26 +15,38 @@
  *
  */
 
-	
-
 
 var clc = require('cli-color'),
-	_ = require("underscore"),
 	fs = require('fs'),
+	Q = require("q"),
 
 	// local
-	Packer = require( __dirname + "/mbot-packer" ),
+	packer = require( __dirname + "/mbot-packer" ),
 	log = require( __dirname + "/mbot-logging" );
 
 
-// string to be displayed by "mbot help"
-var helpstring = fs.readFileSync( __dirname + "/mbot-help.txt", "utf8" );
+
+// helpstring will be passed a string to be displayed by "mbot help"
+var helpstring = Q.defer();
+
+fs.readFile( __dirname + "/mbot-help.txt", "utf8", function ( err, data ) {
+	if ( err )
+		helpstring.reject( err );
+	else
+		helpstring.resolve( data );
+});
+
 
 
 // if no arguments are provided, display the helpstring
 if ( process.argv.length == 2 ) {
-	console.log( clc.redBright("requires command line arguments\n\n") );
-	console.log( helpstring );
+	
+	console.log( clc.redBright("requires command line arguments\n") );
+
+	helpstring.promise.then( function ( str ) {
+		console.log( str ) 
+	});
+
 }
 
 
@@ -46,24 +58,24 @@ if ( process.argv.length == 2 ) {
 
 var config = {};
 
-fs.readFile( __dirname + "/mbot-config.json", function ( err, data ) {
+fs.readFile( __dirname + "/mbot-config.json", "utf8", function ( err, data ) {
 
 	// handle errors with JSON.parse
 	try {
-		config = JSON.parse( data.toString() );
+		config = JSON.parse( data );
+
+		// if 'remote' is set in the config JSON file, use that
+		packer.remote.resolve( config.remote || 'localhost:8080' )
 	}
 	catch ( e ) {
-		if ( e instanceof SyntaxError ) {
-			// catch the error and do nothing with it
-		}
-		else throw e;
+
+		// catch and consume Syntax Errors (which will be generated if the config file is empty)
+		if ( !( e instanceof SyntaxError ) )
+			throw e;
 	}
 
 });
 
-
-// if 'remote' is set in the config JSON file, use that; otherwise default to localhost
-var packer = new Packer( config.remote || "localhost:80" );
 
 
 
@@ -78,7 +90,9 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 	switch ( process.argv[i] ) {
 
 		case "help" :
-			console.log( helpstring );
+			helpstring.promise.then( function ( str ) {
+				console.log( str ) 
+			});
 			break;
 
 		case "install" :
@@ -112,18 +126,16 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 		 */
 		case "config" :
 
-			var params = {};
-
 			// look through command line arguments for key=value pairs
 			for ( var j = i + 1; j < process.argv.length; j++ ) {
 				var match = process.argv[j].match( /(.+)=(.+)/ );
 
-				if ( match ) params[ match[1] ] = match[2];
+				if ( match ) config[ match[1] ] = match[2];
 			}
 
 
 			// combine 'config' with the config file data and reoutput the config file
-			var str = JSON.stringify(_.extend( config, params ), null, 4);
+			var str = JSON.stringify( config, null, 4);
 			fs.writeFile( __dirname + "/mbot-config.json", str );
 
 			log.msg( "Configuration saved." );

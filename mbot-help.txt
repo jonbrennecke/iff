@@ -1,15 +1,18 @@
+MBot is a package manager for Matlab/Octave.
+
 Usage: mbot [options]
 
-	Options:
-		install <package>	Query the API for a given package; and if it's found,
-							download it, unpack it and add it to the matlab path.
+  Options:
+    install <package>   Query the API for a given package; and if it's found,
+                        download it, unpack it and add it to the matlab path.
 
-		init [folder]		Interactively create a package structure in a folder (or
-							the current directory, if no folder is provided).
+    init [folder]       Interactively create a package structure in a folder (or
+                        the current directory, if no folder is provided).
 
-		publish [folder]	If 'folder' is a module, publish the module by
-							registering it with the API.
+    publish [folder]    If 'folder' is a module, publish the module by
+                        registering it with the API.
 
-		config <key=value>	Set a key value pair in the config file.
+    config <key=value>  Set a key value pair in the config file.
 
-		help				Display this prompt.
+    help                Display this prompt.
+    
