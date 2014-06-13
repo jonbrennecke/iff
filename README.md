@@ -1,29 +1,29 @@
-#MBot
+#iff
 
-MBot is a package manager for Matlab/Octave. It's a work-in-progress currently.
+Iff is a package manager for Matlab/Octave.
 
-MBot is written in [Node.js](http://nodejs.org/) and requires both Node and (Node's own package manager) [NPM](https://www.npmjs.org/) to run. It also depends on the [git](https://help.github.com/articles/set-up-git) executable to install packages.
+Iff is written in [Node.js](http://nodejs.org/) and requires both Node and (Node's own package manager) [NPM](https://www.npmjs.org/) to run. It also depends on the [git](https://help.github.com/articles/set-up-git) executable to install packages.
 
 ###Installation:
 
-You can install MBot by typing the following in your shell:
+You can install Iff by typing the following in your shell:
 ```
-npm install mbot
+npm install iff
 ```
 
-MBot is now installed locally; to use mbot as an executable type:
+Iff is now installed locally; to use mbot as an executable type:
 ```
 npm link
 ```
 
 ####Usage:
 
-MBot's command-line interface is designed to be very similar to NPM.  
+Iff's command-line interface is designed to be very similar to NPM.  
 So far, the command options are:
 
 
 ```
-Usage: mbot [options]
+Usage: iff [options]
 
 Options:
 	install <package>	Query the API for a given package; and if it's found,
