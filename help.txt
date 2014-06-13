@@ -1,6 +1,6 @@
-MBot is a package manager for Matlab/Octave.
+Iff is a package manager for Matlab/Octave.
 
-Usage: mbot [options]
+Usage: iff [options]
 
   Options:
     install <package>   Query the API for a given package; and if it's found,

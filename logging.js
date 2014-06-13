@@ -21,8 +21,8 @@ logs.prototype = {
 		return this;
 	},
 
-	mbotJsonExistsError : function ( dir ) { 
-		console.log( err( "Package could not be created. There is already a file named \"mbot.json\" in " + ( dir ? "\"" + dir + "\"" : "the current directory" ) ) );
+	iffJsonExistsError : function ( dir ) { 
+		console.log( err( "Package could not be created. There is already a file named \"iff.json\" in " + ( dir ? "\"" + dir + "\"" : "the current directory" ) ) );
 		return this;
 	},
 
@@ -32,7 +32,7 @@ logs.prototype = {
 	},
 
 	notModError : function ( dir ) {
-		console.log( err( "The directory" + ( dir ? " \"" + dir + "\"" : "" ) + " is not an mbot module." ) );
+		console.log( err( "The directory" + ( dir ? " \"" + dir + "\"" : "" ) + " is not an iff module." ) );
 		return this;
 	},
 

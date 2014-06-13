@@ -13,7 +13,7 @@ var fs = require('fs'),
 			input: process.stdin,
 			output: process.stdout
 		}),
-	log = require( __dirname + "/mbot-logging" );
+	log = require( __dirname + "/logging" );
 
 
 // basic module default prompts
@@ -31,20 +31,20 @@ var defaults = {
 
 module.exports = function ( dir ) {
 
-	// creates a mbot.json and mbot-modules folder within 'subdir'
+	// creates a iff.json and modules folder within 'subdir'
 	// if 'subdir' is undefined, they are created within the current directory
 	function __init ( subdir ) {
 
 		// 'wx' means opening will fail if there is already a file at the given path
-		fs.open( ( subdir || ".") + "/mbot.json", "wx", function ( err, fd ) {
+		fs.open( ( subdir || ".") + "/iff.json", "wx", function ( err, fd ) {
 
-			// if mbot.json already exists, throw an error
+			// if iff.json already exists, throw an error
 			if ( err && err.code == "EEXIST" )
-				log.mbotJsonExistsError( subdir ).die();
+				log.iffJsonExistsError( subdir ).die();
 
 
-			// interactively build the mbot.json file
-			console.log( "This utility will walk you through creating an \"mbot.json\" file.\n" );
+			// interactively build the iff.json file
+			console.log( "This utility will walk you through creating an \"iff.json\" file.\n" );
 
 			rl.question( "Press ENTER to continue (exit at any time by hitting Control^C)\n", function () {				
 
@@ -70,7 +70,7 @@ module.exports = function ( dir ) {
 								fs.write( fd, JSON.stringify( answers, null, 4 ) );
 
 								// TODO probably handle an error if the module can't be created
-								mkdirp( ( subdir || "." ) + "/mbot-modules" );
+								mkdirp( ( subdir || "." ) + "/modules" );
 
 								log.msg( "Success! New module created " + ( subdir ? ( "in \"" + subdir + "\""  ) : "in the current folder" ));
 							}
@@ -97,7 +97,7 @@ module.exports = function ( dir ) {
 				if ( err )
 					log.mkdirError( dir ).die();
 				
-				// within the subdirectory create the mbot.json and mbot-modules folder
+				// within the subdirectory create the iff.json and modules folder
 				__init( dir );
 
 			});
@@ -106,11 +106,11 @@ module.exports = function ( dir ) {
 		// if the directory already exists, determine if it's already a module
 		else {
 
-			// stat "mbot.json" to determine whether "dir" is a valid module
+			// stat "iff.json" to determine whether "dir" is a valid module
 			// (defaults to the current directory if "dir" is undefined)
-			fs.stat( ( dir || "." ) + "/mbot.json", function ( err, stats ) {
+			fs.stat( ( dir || "." ) + "/iff.json", function ( err, stats ) {
 				if ( !err )
-					log.mbotJsonExistsError( dir ).die();
+					log.iffJsonExistsError( dir ).die();
 
 				// if it's not a module, create one within the folder
 				__init( dir );

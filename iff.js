@@ -2,14 +2,14 @@
 
 /**
  *
- * MBOT is a package manager for MATLAB (but this is just the Command Line Interpreter)
+ * IFF is a package manager for MATLAB and Octave (but this is just the Command Line Interpreter)
  *
  *
  * USAGE:
- *		type "mbot help" to display the help information
+ *		type "iff help" to display the help information
  *
  * TODO:
- *		'mbot start'
+ *		'iff start'
  *		startup.m
  *		use symbolic links for globally installed files
  *
@@ -21,15 +21,15 @@ var clc = require('cli-color'),
 	Q = require("q"),
 
 	// local
-	packer = require( __dirname + "/mbot-packer" ),
-	log = require( __dirname + "/mbot-logging" );
+	packer = require( __dirname + "/packer" ),
+	log = require( __dirname + "/logging" );
 
 
 
-// helpstring will be passed a string to be displayed by "mbot help"
+// helpstring will be passed a string to be displayed by "iff help"
 var helpstring = Q.defer();
 
-fs.readFile( __dirname + "/mbot-help.txt", "utf8", function ( err, data ) {
+fs.readFile( __dirname + "/help.txt", "utf8", function ( err, data ) {
 	if ( err )
 		helpstring.reject( err );
 	else
@@ -52,13 +52,13 @@ if ( process.argv.length == 2 ) {
 
 /**
  *
- * read the mbot-config.json file
+ * read the config.json file
  *
  */
 
 var config = {};
 
-fs.readFile( __dirname + "/mbot-config.json", "utf8", function ( err, data ) {
+fs.readFile( __dirname + "/config.json", "utf8", function ( err, data ) {
 
 	// handle errors with JSON.parse
 	try {
@@ -117,11 +117,11 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 		/**
 		 *
-		 * configuration data is stored in a "mbot-config.json" file and is loaded each time mbot is run.
+		 * configuration data is stored in a "config.json" file and is loaded each time iff is run.
 		 *
-		 * To alter the config data, pass arguments to "mbot config" in key=value pairs like:
+		 * To alter the config data, pass arguments to "iff config" in key=value pairs like:
 		 *
-		 * $ mbot config remote=http://github.com/user/repo
+		 * $ iff config remote=http://github.com/user/repo
 		 *
 		 */
 		case "config" :
@@ -136,7 +136,7 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 			// combine 'config' with the config file data and reoutput the config file
 			var str = JSON.stringify( config, null, 4);
-			fs.writeFile( __dirname + "/mbot-config.json", str );
+			fs.writeFile( __dirname + "/config.json", str );
 
 			log.msg( "Configuration saved." );
 

@@ -1,5 +1,5 @@
 {
-	"name" : "mbot",
+	"name" : "iff",
 	"dependencies" : {
 		"cli-color" : "*",
 		"mkdirp" : "*",
@@ -9,10 +9,10 @@
 	},
 	"repository" : {
 		"type" : "git",
-		"url" : "https://github.com/jonbrennecke/mbot"
+		"url" : "https://github.com/jonbrennecke/iff"
 	},
 	"preferGlobal" : "true",
 	"bin" : {
-		"mbot" : "mbot.js"
+		"iff" : "iff.js"
 	}
 }

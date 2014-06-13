@@ -10,7 +10,7 @@ var http = require('http'),
 	request = require('request'),
 	spawn = require('child_process').spawn,
 	Q = require("q"),
-	log = require( __dirname + "/mbot-logging" );
+	log = require( __dirname + "/logging" );
 
 
 
@@ -34,9 +34,9 @@ Packer.prototype = {
 		// defer until remote is resolved
 		this.remote.promise.then( function ( remote ) {
 
-			fs.readFile( ( dir || "." ) + "/mbot.json", function ( err, data ) {
+			fs.readFile( ( dir || "." ) + "/iff.json", function ( err, data ) {
 				
-				// if the mbot.json file doesn't exist, then we aren't in a valid module
+				// if the iff.json file doesn't exist, then we aren't in a valid module
 				if ( err && err.code == "ENOENT" )
 					log.notModError( dir ).die();
 
@@ -80,7 +80,7 @@ Packer.prototype = {
 	 * 
 	 */
 	init : function ( dir ) {
-		require( __dirname + "/mbot-init" )( dir );
+		require( __dirname + "/init" )( dir );
 	},
 
 
@@ -121,7 +121,7 @@ Packer.prototype = {
 					log.git( res.body.message );
 
 					// install a git repository
-					var git = spawn( "git", [ "clone", res.body.message, "mbot-modules/" + pkg ] );
+					var git = spawn( "git", [ "clone", res.body.message, "modules/" + pkg ] );
 
 					this.addToSetup( pkg );
 
@@ -130,7 +130,7 @@ Packer.prototype = {
 					log.msg( res.body.message );
 				else {
 					log.serverError( res && res.body ? res.body.message : "Could not reach server! " +
-						"Use 'mbot config remote=<url>' to tell mbot where to find the server." );
+						"Use 'iff config remote=<url>' to tell iff where to find the server." );
 				}
 
 			}.bind(this) );
