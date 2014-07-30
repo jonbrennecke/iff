@@ -2,18 +2,13 @@
 
 Iff is a package manager for Matlab/Octave.
 
-Iff is written in [Node.js](http://nodejs.org/) and requires both Node and (Node's own package manager) [NPM](https://www.npmjs.org/) to run. It also depends on the [git](https://help.github.com/articles/set-up-git) executable to install packages.
+Iff is written in [Node.js](http://nodejs.org/) and requires both Node and (Node's own package manager) [NPM](https://www.npmjs.org/) to run. It also depends on [Git](https://help.github.com/articles/set-up-git) to install packages.
 
 ###Installation:
 
 You can install Iff by typing the following in your shell:
 ```
-npm install iff
-```
-
-Iff is now installed locally; to use mbot as an executable type:
-```
-npm link
+npm install -g iff
 ```
 
 ####Usage:
