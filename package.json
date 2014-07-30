@@ -14,5 +14,6 @@
 	"preferGlobal" : "true",
 	"bin" : {
 		"iff" : "iff.js"
-	}
+	},
+	"version" : "0.0.1"
 }

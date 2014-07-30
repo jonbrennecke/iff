@@ -1,6 +1,19 @@
+#!/usr/bin/env node
+
 /**
+ *
+ * ██╗███████╗███████╗
+ * ██║██╔════╝██╔════╝
+ * ██║█████╗  █████╗  
+ * ██║██╔══╝  ██╔══╝  
+ * ██║██║     ██║    
+ * ╚═╝╚═╝     ╚═╝    
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * DESCRIPTION
  * 
- * The "Packer" object's job is to handle basic package things, like publishing, creating and updating packages
+ * The "Packer" object handle's most basic package things like publishing, installing
+ * and updating packages
  *
  */
 
@@ -25,9 +38,9 @@ Packer.prototype = {
 
 
 	/**
-	 * 
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * register a module with the server
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	publish : function ( dir ) {
 
@@ -69,11 +82,10 @@ Packer.prototype = {
 	},
 
 
-
 	/**
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * interactively init a package
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * If a name is passed as an argument ('dir'), create a package in 
 	 * the directory with that name (if it exists, or create it if it doesn't)
 	 * otherwise, init the package within the current directory
@@ -85,10 +97,10 @@ Packer.prototype = {
 
 
 	/**
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * append a line adding <path> to the setup.m file
 	 * (creates setup.m if it doesn't already exist)
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
 	addToSetup : function ( path ) {
 		fs.appendFile( 'setup.m', "\r\naddpath '" + path + "'", function ( err ) {
@@ -99,32 +111,54 @@ Packer.prototype = {
 
 
 	/**
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * append a line adding <path> to the setup.m file
+	 * (creates setup.m if it doesn't already exist)
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 */
+	createRequireFunction : function ( path ) {
+		fs.createReadStream( __dirname + '/require.m').pipe(fs.createWriteStream( 'require.m' ));
+	},
+
+
+	/**
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * query if a package by a given name exists,
 	 * if so fetch it and unpack it
-	 *
+	 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 */
-	install : function ( pkg ) {
+	install : function ( name ) {
 
 		// defer until remote is resolved
 		this.remote.promise.then( function ( remote ) {
 
-			var url = "http://" + remote + "/api/install?pkg=" + pkg;
+			var url = "http://" + remote + "/api/find";
 			log.http( url, "GET" );
 
-
-			// ask the server for a url to download the package
-			request.get( url, { json : { pkg : pkg } }, function ( req, res ) {
+			// ask the server for the package matching 'name'
+			request.get( url, { json : { name : name } }, function ( req, res ) {
 
 				if ( res && res.body && res.body.status == 200 ) { // the package has been found
 
-					log.git( res.body.message );
+					var pkg = res.body.message.packages[0];
 
-					// install a git repository
-					var git = spawn( "git", [ "clone", res.body.message, "modules/" + pkg ] );
+					if ( pkg.repository ) {
+						log.git( pkg.repository );
+						
+						// install a git repository
+						var git = spawn( "git", [ "clone", pkg.repository, "modules/" + name ] );
 
-					this.addToSetup( pkg );
+						git.stderr.on( 'data', function ( data ) {
+							console.log( data.toString() )
+						});
 
+						git.stdout.on( 'data', function ( data ) {
+							console.log( data.toString() )
+						});
+
+						this.createRequireFunction( name );
+					}
+					else { console.log("The package repository could not be located.") }
 				}
 				else if ( res && res.body && res.body.status == 404 )
 					log.msg( res.body.message );
@@ -134,7 +168,6 @@ Packer.prototype = {
 				}
 
 			}.bind(this) );
-
 		}.bind(this) );
 			
 	}

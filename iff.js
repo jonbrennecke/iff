@@ -2,31 +2,41 @@
 
 /**
  *
- * IFF is a package manager for MATLAB and Octave (but this is just the Command Line Interpreter)
+ * ██╗███████╗███████╗
+ * ██║██╔════╝██╔════╝
+ * ██║█████╗  █████╗  
+ * ██║██╔══╝  ██╔══╝  
+ * ██║██║     ██║    
+ * ╚═╝╚═╝     ╚═╝    
  *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * DESCRIPTION
  *
+ * Iff is a package manager for MATLAB and Octave (but this is just the Command Line Interpreter)
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * USAGE:
- *		type "iff help" to display the help information
  *
- * TODO:
- *		'iff start'
- *		startup.m
- *		use symbolic links for globally installed files
+ * type "iff help" to display the help information
  *
  */
 
-
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// let's grab some modules
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var clc = require('cli-color'),
 	fs = require('fs'),
 	Q = require("q"),
 
-	// local
+	// local modules
 	packer = require( __dirname + "/packer" ),
 	log = require( __dirname + "/logging" );
 
 
-
-// helpstring will be passed a string to be displayed by "iff help"
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 'iff help' will display a message about the CLI syntax for iff
+// this message is contained in the file 'help.txt', which we'll load into 'helpstring'
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var helpstring = Q.defer();
 
 fs.readFile( __dirname + "/help.txt", "utf8", function ( err, data ) {
@@ -37,8 +47,9 @@ fs.readFile( __dirname + "/help.txt", "utf8", function ( err, data ) {
 });
 
 
-
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // if no arguments are provided, display the helpstring
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if ( process.argv.length == 2 ) {
 	
 	console.log( clc.redBright("requires command line arguments\n") );
@@ -46,16 +57,12 @@ if ( process.argv.length == 2 ) {
 	helpstring.promise.then( function ( str ) {
 		console.log( str ) 
 	});
-
 }
 
 
-/**
- *
- * read the config.json file
- *
- */
-
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// read the config.json file into 'config'
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var config = {};
 
 fs.readFile( __dirname + "/config.json", "utf8", function ( err, data ) {
@@ -79,12 +86,9 @@ fs.readFile( __dirname + "/config.json", "utf8", function ( err, data ) {
 
 
 
-/**
- *
- * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ read command line args ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
- * 
- */
-
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// read the command line arguments
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 for ( var i = 0; i < process.argv.length; i++ ) {
 
 	switch ( process.argv[i] ) {
@@ -97,7 +101,9 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 		case "install" :
 
-			// ensure a package name is passed
+			// if a package name is passed, then install that package
+			// otherwise, check for a local 'iff.json' and install all the dependencies listed in it
+
 			if ( !process.argv[i+1] ) {
 				console.log( clc.redBright( "\"install\" requires a package name" ) );
 				break;
@@ -116,13 +122,13 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 
 		/**
-		 *
+		 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		 * configuration data is stored in a "config.json" file and is loaded each time iff is run.
 		 *
 		 * To alter the config data, pass arguments to "iff config" in key=value pairs like:
 		 *
 		 * $ iff config remote=http://github.com/user/repo
-		 *
+		 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		 */
 		case "config" :
 

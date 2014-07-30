@@ -1,12 +1,26 @@
+#!/usr/bin/env node
+
 /**
  *
- * interactively init a package in 'dir'
+ * ██╗███████╗███████╗
+ * ██║██╔════╝██╔════╝
+ * ██║█████╗  █████╗  
+ * ██║██╔══╝  ██╔══╝  
+ * ██║██║     ██║    
+ * ╚═╝╚═╝     ╚═╝    
  *
- * this method is strictly additive; it will not override any preexisting files.
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * DESCRIPTION
  * 
+ * Interactively create a package in 'dir'.
+ * this method is strictly additive; it will not override any preexisting files.
+ *
  */
 
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// lets grab some modules
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var fs = require('fs'),
 	mkdirp = require('mkdirp'),
 			rl = require('readline').createInterface({
