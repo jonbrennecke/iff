@@ -12,6 +12,8 @@ Usage: iff [options]
     publish [folder]    If 'folder' is a module, publish the module by
                         registering it with the API.
 
+    build <target>		If 'build' is specified in the manifest file 'iff.json', then use the build description to 						compile the C or C++ MEX files.  By default, iff looks for a rule named 'default'.  Or, if 						there are no named rules (or only one) then iff builds the only rule in the project.
+
     config <key=value>  Set a key value pair in the config file.
 
     help                Display this prompt.

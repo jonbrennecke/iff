@@ -26,7 +26,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 var clc = require('cli-color'),
 	fs = require('fs'),
-	Q = require("q"),
+	Q = require('q'),
 
 	// local modules
 	packer = require( __dirname + "/packer" ),
@@ -148,6 +148,26 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 
 			break;
 
+		/**
+		 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		 * with the option 'build', iff will build C and/or C++ files for MEX 
+		 *
+		 * $ iff build 'target'
+		 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		 */
+		case "build" :
+
+			var make = require( __dirname + '/make' );
+			var manifest = require( process.env.PWD + '/iff.json' );
+
+			if ( !manifest.hasOwnProperty('build') )
+				clc.red("No field 'build' in the manifest file 'iff.json'");
+
+			// build the file
+			make( manifest.build );
+
+
+			break;
 
 		case "update" :
 		case __filename :
