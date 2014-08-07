@@ -104,7 +104,7 @@ module.exports = function ( makefile ) {
 				}
 			}
 			else {
-				args = args.concat([rule.source.join(' ')]).concat(['-o', rule.target]);
+				args = args.concat(rule.source).concat(['-o', rule.target]);
 			}
 
 
