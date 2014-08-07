@@ -158,7 +158,7 @@ for ( var i = 0; i < process.argv.length; i++ ) {
 		case "build" :
 
 			var make = require( __dirname + '/make' );
-			var manifest = require( process.env.PWD + '/iff.json' );
+			var manifest = require( process.cwd() + '/iff.json' );
 
 			if ( !manifest.hasOwnProperty('build') )
 				clc.red("No field 'build' in the manifest file 'iff.json'");
